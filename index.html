@@ -1,118 +1,55 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Para tí</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bootstrap demo</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous"
-    />
-    <style>
-      /* Estilos para el contenedor de la palabra */
-      .palabra {
-        font-size: 4em;
-        font-weight: bold;
-        text-align: center;
-        margin-top: 20px;
+<head>
+  <style>
+    #videoElement {
+      width: 400px;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  
+
+  <script>
+    // Acceder a la cámara frontal en un dispositivo móvil
+    var constraints = { video: { facingMode: 'user' } };
+
+    // Verificar si el dispositivo es un móvil
+    //var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    // Obtener el flujo de la cámara según las restricciones
+    function getCameraStream(constraints) {
+      if (isMobile) {
+        constraints.video = { facingMode: { exact: 'user' } };
       }
-    </style>
-  </head>
-  <body>
-    <!-- Contenedor para la palabra -->
-    <div
-      class="palabra vh-100 d-flex align-items-center justify-content-center"
-    ></div>
+      return navigator.mediaDevices.getUserMedia(constraints);
+    }
 
-    <!-- Script para mostrar las palabras cada 5 segundos -->
-    <script>
-      // Array con las palabras a mostrar
-      const palabras = [
-        "Hola",
-        "Como",
-        "Estas? 😊",
-        "Hace",
-        "Mucho",
-        "Que",
-        "No",
-        "te",
-        "Programo",
-        "Algo",
-        "Lindo 😔",
-        "y",
-        "Quiero",
-        "Que",
-        "Sepas",
-        "Que",
-        "Me",
-        "Importas",
-        "Mucho ❤️",
-        "YYYYY",
-        "Que",
-        "Te",
-        "Quiero",
-        "Mucho ❤️",
-        "❤️❤️❤️❤️",
-        "❤️❤️❤️❤️",
-        "❤️❤️❤️❤️",
-        "❤️❤️❤️❤️",
-        "❤️❤️❤️❤️",
-        "❤️❤️❤️❤️",
+    // Mostrar el flujo de la cámara en el elemento de vídeo
+    function showCameraStream() {
+      getCameraStream(constraints)
+        .then(function(stream) {
+          var videoElement = document.getElementById('videoElement');
+          videoElement.srcObject = stream;
+        })
+        .catch(function(error) {
+          console.error('Error al acceder a la cámara: ', error);
 
-      ];
+          // Intentar obtener el flujo de la cámara sin restricciones
+          constraints = { video: true };
+          getCameraStream(constraints)
+            .then(function(stream) {
+              var videoElement = document.getElementById('videoElement');
+              videoElement.srcObject = stream;
+            })
+            .catch(function(error) {
+              console.error('No se pudo acceder a la cámara: ', error);
+            });
+        });
+    }
 
-      // Array con los colores de fondo disponibles
-      const fondos = [
-        "#ffcccc",
-        "#ccffcc",
-        "#ccccff",
-        "#ffffcc",
-        "#ffccff",
-        "#ccffff",
-      ];
-
-      // Contador para llevar el control de las palabras mostradas
-      let contador = 0;
-
-      // Función para mostrar la siguiente palabra y fondo aleatorio
-      function mostrarPalabra() {
-        // Obtener el elemento del DOM para mostrar la palabra
-        const palabraElemento = document.querySelector(".palabra");
-
-        // Mostrar la palabra correspondiente
-        palabraElemento.textContent = palabras[contador];
-
-        // Cambiar el fondo aleatorio
-        const fondoIndex = Math.floor(Math.random() * fondos.length);
-        document.body.style.backgroundColor = fondos[fondoIndex];
-
-        // Aumentar el contador para la siguiente palabra
-        contador++;
-
-        // Si ya se han mostrado todas las palabras, reiniciar el contador
-        if (contador === palabras.length) {
-          contador = 0;
-        }
-      }
-
-      // Mostrar la primera palabra y fondo al cargar la página
-      mostrarPalabra();
-
-      // Mostrar una palabra nueva y fondo aleatorio cada 5 segundos
-      setInterval(mostrarPalabra, 1000);
-    </script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
-      integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
-      integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+    showCameraStream();
+  </script>
+</body>
 </html>
